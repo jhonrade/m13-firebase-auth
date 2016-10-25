@@ -48,9 +48,11 @@ $(function() {
         var email = $('#email').val();
         var password = $('#password').val();
 
+        console.log (email, password);
+
 
         // Authenticate using email and password, then redirect
-        firebase.auth().signInWithEmailAndPasswor(email, password)
+        firebase.auth().signInWithEmailAndPassword(email, password)
         .then(function(user){     
         
             // Set display name
@@ -70,10 +72,14 @@ $(function() {
     // Sign out: Function to log a user out of firebase
     var signOut = function() {
         // Sign out, then redirect
-
-
+        firebase.auth().signOut().then(function() {
+            window.location = 'sign-up.html';
+        });
 
     };
+
+
+
 
     // Assign event lister to form submission
     $('form').on('submit', function(event) {
@@ -90,25 +96,26 @@ $(function() {
 
 
     // Assign click event to logout button
+    $('#log-out').on('click', function() {
+        signOut();
+    });
 
 
 
     // Authentication Change: see if a user is already signed in, and redirect
-    firebase.auth().onAuthStateChanged(function(user) {     
-        if (user ) {     
-        // Rediriect to index.html if there is a user and the pathname isn't '/'
-        window.location = '/';
-        
-        } else {     
-        // Redirect to sign-in if there is NOT a user and the pathname IS '/' 
-        window.location = '/';
-        
-        } 
-    });
-
-
+    var checked;
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (checked !== true) {
             // Rediriect to index.html if there is a user and the pathname isn't '/'
+            if (user && window.location.pathname != '/') {
+                window.location = 'index.html';
+            }
 
             // Redirect to sign-in if there is NOT a user and the pathname IS '/'
-
+            if (!user && window.location.pathname == '/') {
+                window.location = 'sign-in.html';
+            }
+            checked = true;
+        }
+    });
 });
